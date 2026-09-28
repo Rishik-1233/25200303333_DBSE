@@ -1,0 +1,554 @@
+=========================================================
+
+TOPIC: JOINS AND SET OPERATIONS
+=========================================================
+Dr.Y Subbarayudu ,Department CSE ,KL University Bachupally Hyderabad
+=========================================================
+PART 1: CROSS JOIN
+=========================================================
+
+STEP 1: CREATE TABLES
+---------------------------------------------------------
+
+CREATE TABLE class (
+    id INT,
+    name VARCHAR(30)
+);
+
+CREATE TABLE class_info (
+    id INT,
+    address VARCHAR(30)
+);
+
+=========================================================
+STEP 2: INSERT DATA
+=========================================================
+
+INSERT INTO class VALUES
+(1,'abhi'),
+(2,'adam'),
+(4,'alex');
+
+INSERT INTO class_info VALUES
+(1,'DELHI'),
+(2,'MUMBAI'),
+(3,'CHENNAI');
+
+=========================================================
+QUESTION 1 - CROSS JOIN
+=========================================================
+
+SCENARIO:
+School administration wants every student to be paired
+with every available city for survey analysis.
+
+QUERY:
+
+SELECT *
+FROM class
+CROSS JOIN class_info;
+
+OUTPUT:
+
+id  name   id  address
+-----------------------
+1   abhi   1   DELHI
+2   adam   1   DELHI
+4   alex   1   DELHI
+1   abhi   2   MUMBAI
+2   adam   2   MUMBAI
+4   alex   2   MUMBAI
+1   abhi   3   CHENNAI
+2   adam   3   CHENNAI
+4   alex   3   CHENNAI
+
+=========================================================
+PART 2: INNER JOIN
+=========================================================
+
+CREATE TABLE class (
+    id INT,
+    name VARCHAR(30)
+);
+
+CREATE TABLE class_info (
+    id INT,
+    address VARCHAR(30)
+);
+
+INSERT INTO class VALUES
+(1,'abhi'),
+(2,'adam'),
+(3,'alex'),
+(4,'anu');
+
+INSERT INTO class_info VALUES
+(1,'DELHI'),
+(2,'MUMBAI'),
+(3,'CHENNAI');
+
+=========================================================
+QUESTION 2 - INNER JOIN
+=========================================================
+
+SCENARIO:
+Management wants only students whose address details
+are available in both tables.
+
+QUERY:
+
+SELECT *
+FROM class
+INNER JOIN class_info
+ON class.id = class_info.id;
+
+OUTPUT:
+
+id  name   id  address
+-----------------------
+1   abhi   1   DELHI
+2   adam   2   MUMBAI
+3   alex   3   CHENNAI
+
+=========================================================
+QUESTION 3 - INNER JOIN
+=========================================================
+
+SCENARIO:
+Find student names and addresses for registered students.
+
+QUERY:
+
+SELECT class.name,
+       class_info.address
+FROM class
+INNER JOIN class_info
+ON class.id=class_info.id;
+
+OUTPUT:
+
+abhi   DELHI
+adam   MUMBAI
+alex   CHENNAI
+
+=========================================================
+PART 3: NATURAL JOIN
+=========================================================
+
+QUESTION 4 - NATURAL JOIN
+=========================================================
+
+SCENARIO:
+The database administrator wants matching records
+automatically joined using common columns.
+
+QUERY:
+
+SELECT *
+FROM class
+NATURAL JOIN class_info;
+
+OUTPUT:
+
+id  name   address
+------------------
+1   abhi   DELHI
+2   adam   MUMBAI
+3   alex   CHENNAI
+
+=========================================================
+PART 4: LEFT OUTER JOIN
+=========================================================
+
+INSERT INTO class VALUES
+(5,'ashish');
+
+INSERT INTO class_info VALUES
+(7,'NOIDA'),
+(8,'PANIPAT');
+
+=========================================================
+QUESTION 5 - LEFT JOIN
+=========================================================
+
+SCENARIO:
+School wants all students even if address information
+is not available.
+
+QUERY:
+
+SELECT *
+FROM class
+LEFT OUTER JOIN class_info
+ON class.id=class_info.id;
+
+OUTPUT:
+
+1  abhi    1  DELHI
+2  adam    2  MUMBAI
+3  alex    3  CHENNAI
+4  anu     NULL NULL
+5  ashish  NULL NULL
+
+=========================================================
+QUESTION 6 - LEFT JOIN
+=========================================================
+
+SCENARIO:
+Find students who do not have address records.
+
+QUERY:
+
+SELECT *
+FROM class
+LEFT JOIN class_info
+ON class.id=class_info.id
+WHERE class_info.id IS NULL;
+
+OUTPUT:
+
+4  anu
+5  ashish
+
+=========================================================
+PART 5: RIGHT OUTER JOIN
+=========================================================
+
+QUESTION 7 - RIGHT JOIN
+=========================================================
+
+SCENARIO:
+Administration wants all address records even if
+students are missing.
+
+QUERY:
+
+SELECT *
+FROM class
+RIGHT OUTER JOIN class_info
+ON class.id=class_info.id;
+
+OUTPUT:
+
+1  abhi  1  DELHI
+2  adam  2  MUMBAI
+3  alex  3  CHENNAI
+NULL NULL 7 NOIDA
+NULL NULL 8 PANIPAT
+
+=========================================================
+QUESTION 8 - RIGHT JOIN
+=========================================================
+
+SCENARIO:
+Find address records that do not belong to any student.
+
+QUERY:
+
+SELECT *
+FROM class
+RIGHT JOIN class_info
+ON class.id=class_info.id
+WHERE class.id IS NULL;
+
+OUTPUT:
+
+7  NOIDA
+8  PANIPAT
+
+=========================================================
+PART 6: FULL OUTER JOIN
+=========================================================
+
+QUESTION 9 - FULL OUTER JOIN
+=========================================================
+
+SCENARIO:
+Management wants all records from both tables,
+matched and unmatched.
+
+QUERY:
+
+SELECT *
+FROM class
+FULL OUTER JOIN class_info
+ON class.id=class_info.id;
+
+OUTPUT:
+
+1 abhi    1 DELHI
+2 adam    2 MUMBAI
+3 alex    3 CHENNAI
+4 anu     NULL NULL
+5 ashish  NULL NULL
+NULL NULL 7 NOIDA
+NULL NULL 8 PANIPAT
+
+=========================================================
+QUESTION 10 - FULL OUTER JOIN
+=========================================================
+
+SCENARIO:
+Audit team wants unmatched records from both tables.
+
+QUERY:
+
+SELECT *
+FROM class
+FULL OUTER JOIN class_info
+ON class.id=class_info.id
+WHERE class.id IS NULL
+OR class_info.id IS NULL;
+
+OUTPUT:
+
+4 anu
+5 ashish
+7 NOIDA
+8 PANIPAT
+
+=========================================================
+PART 7: UNION
+=========================================================
+
+CREATE TABLE first_table(
+id INT,
+name VARCHAR(30)
+);
+
+CREATE TABLE second_table(
+id INT,
+name VARCHAR(30)
+);
+
+INSERT INTO first_table VALUES
+(1,'abhi'),
+(2,'adam');
+
+INSERT INTO second_table VALUES
+(2,'adam'),
+(3,'chester');
+
+=========================================================
+QUESTION 11 - UNION
+=========================================================
+
+SCENARIO:
+Management wants a combined list without duplicates.
+
+QUERY:
+
+SELECT * FROM first_table
+UNION
+SELECT * FROM second_table;
+
+OUTPUT:
+
+1 abhi
+2 adam
+3 chester
+
+=========================================================
+QUESTION 12 - UNION
+=========================================================
+
+SCENARIO:
+Generate a master student list from two branches.
+
+QUERY:
+
+SELECT name FROM first_table
+UNION
+SELECT name FROM second_table;
+
+OUTPUT:
+
+abhi
+adam
+chester
+
+=========================================================
+PART 8: UNION ALL
+=========================================================
+
+QUESTION 13 - UNION ALL
+=========================================================
+
+SCENARIO:
+Management wants all records including duplicates.
+
+QUERY:
+
+SELECT * FROM first_table
+UNION ALL
+SELECT * FROM second_table;
+
+OUTPUT:
+
+1 abhi
+2 adam
+2 adam
+3 chester
+
+=========================================================
+QUESTION 14 - UNION ALL
+=========================================================
+
+SCENARIO:
+Count total records from both branches.
+
+QUERY:
+
+SELECT COUNT(*)
+FROM
+(
+SELECT * FROM first_table
+UNION ALL
+SELECT * FROM second_table
+) A;
+
+OUTPUT:
+
+4
+
+=========================================================
+PART 9: INTERSECT
+=========================================================
+
+QUESTION 15 - INTERSECT
+=========================================================
+
+SCENARIO:
+Find students present in both branches.
+
+QUERY:
+
+SELECT * FROM first_table
+INTERSECT
+SELECT * FROM second_table;
+
+OUTPUT:
+
+2 adam
+
+=========================================================
+QUESTION 16 - INTERSECT
+=========================================================
+
+SCENARIO:
+Find common student names.
+
+QUERY:
+
+SELECT name FROM first_table
+INTERSECT
+SELECT name FROM second_table;
+
+OUTPUT:
+
+adam
+
+=========================================================
+PART 10: MINUS
+=========================================================
+
+QUESTION 17 - MINUS
+=========================================================
+
+SCENARIO:
+Find students present only in the first branch.
+
+QUERY:
+
+SELECT * FROM first_table
+MINUS
+SELECT * FROM second_table;
+
+OUTPUT:
+
+1 abhi
+
+=========================================================
+QUESTION 18 - MINUS
+=========================================================
+
+SCENARIO:
+Find names that exist only in first_table.
+
+QUERY:
+
+SELECT name FROM first_table
+MINUS
+SELECT name FROM second_table;
+
+OUTPUT:
+
+abhi
+
+=========================================================
+ADVANCED INTERVIEW QUESTIONS
+=========================================================
+
+QUESTION 19
+
+SCENARIO:
+Find students having matching addresses.
+
+QUERY:
+
+SELECT c.id,c.name,ci.address
+FROM class c
+INNER JOIN class_info ci
+ON c.id=ci.id;
+
+=========================================================
+
+QUESTION 20
+
+SCENARIO:
+Generate a report showing all students and address
+availability status.
+
+QUERY:
+
+SELECT c.id,
+       c.name,
+       CASE
+           WHEN ci.address IS NULL
+           THEN 'Address Missing'
+           ELSE 'Address Available'
+       END AS Status
+FROM class c
+LEFT JOIN class_info ci
+ON c.id=ci.id;
+
+OUTPUT:
+
+1 abhi    Address Available
+2 adam    Address Available
+3 alex    Address Available
+4 anu     Address Missing
+5 ashish  Address Missing
+
+=========================================================
+TOPICS COVERED
+=========================================================
+
+1. CROSS JOIN
+2. INNER JOIN
+3. NATURAL JOIN
+4. LEFT OUTER JOIN
+5. RIGHT OUTER JOIN
+6. FULL OUTER JOIN
+7. UNION
+8. UNION ALL
+9. INTERSECT
+10. MINUS
+11. CASE
+12. JOIN + WHERE
+13. JOIN + NULL
+14. JOIN + FILTERING
+
+=========================================================
+END OF SQL JOIN & SET OPERATION NOTES
+=========================================================
