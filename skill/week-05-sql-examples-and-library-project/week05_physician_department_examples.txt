@@ -1,0 +1,504 @@
+=========================================================
+SQL PRACTICE NOTES - PHYSICIAN & DEPARTMENT TABLES
+=========================================================
+
+STEP 1: CREATE PHYSICIAN TABLE
+---------------------------------------------------------
+
+CREATE TABLE physician (
+    employeeid INT PRIMARY KEY,
+    name VARCHAR(100),
+    position VARCHAR(100),
+    ssn VARCHAR(20)
+);
+
+=========================================================
+STEP 2: INSERT DATA INTO PHYSICIAN
+=========================================================
+
+INSERT INTO physician VALUES
+(1,'John Dorian','Staff Internist','111111111'),
+(2,'Elliot Reid','Attending Physician','222222222'),
+(3,'Christopher Turk','Surgical Attending Physician','333333333'),
+(4,'Percival Cox','Senior Attending Physician','444444444'),
+(5,'Bob Kelso','Head Chief of Medicine','555555555'),
+(6,'Todd Quinlan','Surgical Attending Physician','666666666'),
+(7,'John Wen','Surgical Attending Physician','777777777'),
+(8,'Keith Dudemeister','MD Resident','888888888'),
+(9,'Molly Clock','Attending Psychiatrist','999999999');
+
+=========================================================
+STEP 3: CREATE DEPARTMENT TABLE
+=========================================================
+
+CREATE TABLE department (
+    departmentid INT PRIMARY KEY,
+    name VARCHAR(100),
+    head INT
+);
+
+=========================================================
+STEP 4: INSERT DATA INTO DEPARTMENT
+=========================================================
+
+INSERT INTO department VALUES
+(1,'General Medicine',4),
+(2,'Surgery',7),
+(3,'Psychiatry',9);
+
+=========================================================
+QUESTION 1 - INNER JOIN
+=========================================================
+
+SCENARIO:
+The hospital administration wants a report showing
+each department and its department head.
+
+QUERY:
+
+SELECT d.name AS Department,
+       p.name AS Head_Physician
+FROM department d
+JOIN physician p
+ON d.head = p.employeeid;
+
+OUTPUT:
+
+Department          Head_Physician
+----------------------------------
+General Medicine    Percival Cox
+Surgery             John Wen
+Psychiatry          Molly Clock
+
+=========================================================
+QUESTION 2 - WHERE CLAUSE
+=========================================================
+
+SCENARIO:
+The HR department wants a list of all physicians
+working as Surgical Attending Physicians.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE position='Surgical Attending Physician';
+
+OUTPUT:
+
+Christopher Turk
+Todd Quinlan
+John Wen
+
+=========================================================
+QUESTION 3 - WHERE + LIKE
+=========================================================
+
+SCENARIO:
+Management wants to identify physicians whose names
+start with 'John'.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE name LIKE 'John%';
+
+OUTPUT:
+
+John Dorian
+John Wen
+
+=========================================================
+QUESTION 4 - COUNT()
+=========================================================
+
+SCENARIO:
+The hospital wants to know the total number of
+physicians currently employed.
+
+QUERY:
+
+SELECT COUNT(*) AS Total_Physicians
+FROM physician;
+
+OUTPUT:
+
+9
+
+=========================================================
+QUESTION 5 - COUNT DISTINCT
+=========================================================
+
+SCENARIO:
+HR wants to know how many different job positions
+exist in the hospital.
+
+QUERY:
+
+SELECT COUNT(DISTINCT position)
+FROM physician;
+
+OUTPUT:
+
+6
+
+=========================================================
+QUESTION 6 - GROUP BY
+=========================================================
+
+SCENARIO:
+The HR manager wants to know how many physicians
+are working in each position.
+
+QUERY:
+
+SELECT position,
+       COUNT(*) AS Total_Employees
+FROM physician
+GROUP BY position;
+
+OUTPUT:
+
+Position                              Total_Employees
+------------------------------------------------------
+Attending Physician                          1
+Attending Psychiatrist                       1
+Head Chief of Medicine                       1
+MD Resident                                  1
+Senior Attending Physician                   1
+Staff Internist                              1
+Surgical Attending Physician                 3
+
+=========================================================
+QUESTION 7 - GROUP BY + HAVING
+=========================================================
+
+SCENARIO:
+The HR team wants to find positions occupied
+by more than one physician.
+
+QUERY:
+
+SELECT position,
+       COUNT(*) AS Total_Employees
+FROM physician
+GROUP BY position
+HAVING COUNT(*) > 1;
+
+OUTPUT:
+
+Position                              Total_Employees
+------------------------------------------------------
+Surgical Attending Physician                 3
+
+=========================================================
+QUESTION 8 - ORDER BY
+=========================================================
+
+SCENARIO:
+Hospital management wants an alphabetical
+directory of physicians.
+
+QUERY:
+
+SELECT *
+FROM physician
+ORDER BY name ASC;
+
+OUTPUT:
+
+Bob Kelso
+Christopher Turk
+Elliot Reid
+John Dorian
+John Wen
+Keith Dudemeister
+Molly Clock
+Percival Cox
+Todd Quinlan
+
+=========================================================
+QUESTION 9 - ORDER BY DESC
+=========================================================
+
+SCENARIO:
+Management wants to see physician records
+sorted by employee ID from highest to lowest.
+
+QUERY:
+
+SELECT *
+FROM physician
+ORDER BY employeeid DESC;
+
+OUTPUT:
+
+9 Molly Clock
+8 Keith Dudemeister
+7 John Wen
+6 Todd Quinlan
+5 Bob Kelso
+4 Percival Cox
+3 Christopher Turk
+2 Elliot Reid
+1 John Dorian
+
+=========================================================
+QUESTION 10 - WHERE + IN
+=========================================================
+
+SCENARIO:
+The CEO wants details of department heads only.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE employeeid IN
+(
+    SELECT head
+    FROM department
+);
+
+OUTPUT:
+
+Percival Cox
+John Wen
+Molly Clock
+
+=========================================================
+QUESTION 11 - SUBQUERY
+=========================================================
+
+SCENARIO:
+Find physicians who are not department heads.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE employeeid NOT IN
+(
+    SELECT head
+    FROM department
+);
+
+OUTPUT:
+
+John Dorian
+Elliot Reid
+Christopher Turk
+Bob Kelso
+Todd Quinlan
+Keith Dudemeister
+
+=========================================================
+QUESTION 12 - GROUP BY + ORDER BY
+=========================================================
+
+SCENARIO:
+HR wants to see positions ranked by number
+of employees.
+
+QUERY:
+
+SELECT position,
+       COUNT(*) AS Total_Employees
+FROM physician
+GROUP BY position
+ORDER BY Total_Employees DESC;
+
+OUTPUT:
+
+Surgical Attending Physician      3
+All other positions               1
+
+=========================================================
+QUESTION 13 - WHERE + LIKE
+=========================================================
+
+SCENARIO:
+The administration wants all physicians whose
+position contains the word 'Attending'.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE position LIKE '%Attending%';
+
+OUTPUT:
+
+Elliot Reid
+Christopher Turk
+Percival Cox
+Todd Quinlan
+John Wen
+Molly Clock
+
+=========================================================
+QUESTION 14 - JOIN + WHERE
+=========================================================
+
+SCENARIO:
+The hospital wants to know who heads the
+Surgery department.
+
+QUERY:
+
+SELECT p.name
+FROM physician p
+JOIN department d
+ON p.employeeid=d.head
+WHERE d.name='Surgery';
+
+OUTPUT:
+
+John Wen
+
+=========================================================
+QUESTION 15 - JOIN + ORDER BY
+=========================================================
+
+SCENARIO:
+Hospital administration wants department names
+and head physicians sorted by department name.
+
+QUERY:
+
+SELECT d.name,
+       p.name
+FROM department d
+JOIN physician p
+ON d.head=p.employeeid
+ORDER BY d.name;
+
+OUTPUT:
+
+General Medicine    Percival Cox
+Psychiatry          Molly Clock
+Surgery             John Wen
+
+=========================================================
+QUESTION 16 - WHERE + NOT LIKE
+=========================================================
+
+SCENARIO:
+Find physicians who are not involved in surgery.
+
+QUERY:
+
+SELECT *
+FROM physician
+WHERE position NOT LIKE '%Surgical%';
+
+OUTPUT:
+
+John Dorian
+Elliot Reid
+Percival Cox
+Bob Kelso
+Keith Dudemeister
+Molly Clock
+
+=========================================================
+QUESTION 17 - COUNT + HAVING
+=========================================================
+
+SCENARIO:
+Find positions having at least 2 employees.
+
+QUERY:
+
+SELECT position,
+       COUNT(*) AS Total
+FROM physician
+GROUP BY position
+HAVING COUNT(*) >= 2;
+
+OUTPUT:
+
+Surgical Attending Physician     3
+
+=========================================================
+QUESTION 18 - EXISTS
+=========================================================
+
+SCENARIO:
+Find departments that currently have a valid head.
+
+QUERY:
+
+SELECT *
+FROM department d
+WHERE EXISTS
+(
+    SELECT 1
+    FROM physician p
+    WHERE p.employeeid=d.head
+);
+
+OUTPUT:
+
+General Medicine
+Surgery
+Psychiatry
+
+=========================================================
+QUESTION 19 - MAX()
+=========================================================
+
+SCENARIO:
+Management wants the highest employee ID
+currently assigned.
+
+QUERY:
+
+SELECT MAX(employeeid)
+FROM physician;
+
+OUTPUT:
+
+9
+
+=========================================================
+QUESTION 20 - MIN()
+=========================================================
+
+SCENARIO:
+Management wants the earliest employee ID
+currently assigned.
+
+QUERY:
+
+SELECT MIN(employeeid)
+FROM physician;
+
+OUTPUT:
+
+1
+
+=========================================================
+TOPICS COVERED
+=========================================================
+
+1. WHERE
+2. LIKE
+3. NOT LIKE
+4. IN
+5. NOT IN
+6. EXISTS
+7. GROUP BY
+8. HAVING
+9. ORDER BY
+10. INNER JOIN
+11. SUBQUERY
+12. COUNT()
+13. COUNT(DISTINCT)
+14. MIN()
+15. MAX()
+
+=========================================================
+END OF PHYSICIAN & DEPARTMENT SQL NOTES
+=========================================================

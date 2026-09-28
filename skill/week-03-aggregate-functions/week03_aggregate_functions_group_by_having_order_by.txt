@@ -1,0 +1,476 @@
+=========================================================
+TOPIC: AGGREGATE FUNCTIONS with WHERE, GROUP BY,
+HAVING, ORDER BY
+DATABASE: BANK MANAGEMENT SYSTEM
+=========================================================
+Dr.Y Subbarayudu ,Department CSE ,KL University Bachupally Hyderabad
+=========================================================
+STEP 1: CREATE TABLE
+=========================================================
+
+CREATE TABLE bank_transactions (
+    txn_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    branch_name VARCHAR(50),
+    transaction_type VARCHAR(20),
+    amount DECIMAL(10,2),
+    transaction_date DATE
+);
+
+=========================================================
+STEP 2: INSERT DATA
+=========================================================
+
+INSERT INTO bank_transactions VALUES
+(101,'Ravi','Hyderabad','Deposit',5000,'2024-01-05'),
+(102,'Sita','Hyderabad','Withdrawal',2000,'2024-01-06'),
+(103,'Kiran','Vijayawada','Deposit',12000,'2024-01-08'),
+(104,'Anil','Vizag','Deposit',8000,'2024-01-10'),
+(105,'Priya','Hyderabad','Withdrawal',3500,'2024-01-11'),
+(106,'Ramesh','Vizag','Deposit',15000,'2024-01-12'),
+(107,'Keerthi','Vijayawada','Withdrawal',1000,'2024-01-13'),
+(108,'Rahul','Hyderabad','Deposit',9000,'2024-01-14'),
+(109,'Sneha','Vizag','Withdrawal',4000,'2024-01-15'),
+(110,'Madhu','Vijayawada','Deposit',11000,'2024-01-16');
+
+=========================================================
+QUESTION 1 - SUM()
+=========================================================
+
+SCENARIO:
+The bank manager wants to know the total amount
+transacted by all customers.
+
+QUERY:
+
+SELECT SUM(amount) AS Total_Amount
+FROM bank_transactions;
+
+OUTPUT:
+
+Total_Amount
+------------
+70500.00
+
+=========================================================
+QUESTION 2 - AVG()
+=========================================================
+
+SCENARIO:
+Management wants to know the average transaction amount.
+
+QUERY:
+
+SELECT AVG(amount) AS Average_Transaction
+FROM bank_transactions;
+
+OUTPUT:
+
+Average_Transaction
+-------------------
+7050.00
+
+=========================================================
+QUESTION 3 - MAX()
+=========================================================
+
+SCENARIO:
+The regional manager wants to identify the highest
+transaction amount recorded.
+
+QUERY:
+
+SELECT MAX(amount) AS Highest_Transaction
+FROM bank_transactions;
+
+OUTPUT:
+
+Highest_Transaction
+-------------------
+15000.00
+
+=========================================================
+QUESTION 4 - MIN()
+=========================================================
+
+SCENARIO:
+The audit department wants to know the smallest
+transaction amount recorded.
+
+QUERY:
+
+SELECT MIN(amount) AS Lowest_Transaction
+FROM bank_transactions;
+
+OUTPUT:
+
+Lowest_Transaction
+------------------
+1000.00
+
+=========================================================
+QUESTION 5 - COUNT()
+=========================================================
+
+SCENARIO:
+The operations team wants to know how many
+transactions were processed.
+
+QUERY:
+
+SELECT COUNT(*) AS Total_Transactions
+FROM bank_transactions;
+
+OUTPUT:
+
+Total_Transactions
+------------------
+10
+
+=========================================================
+QUESTION 6 - WHERE + SUM()
+=========================================================
+
+SCENARIO:
+The bank wants to know the total amount deposited
+by customers.
+
+QUERY:
+
+SELECT SUM(amount) AS Total_Deposit
+FROM bank_transactions
+WHERE transaction_type='Deposit';
+
+OUTPUT:
+
+Total_Deposit
+-------------
+60000.00
+
+=========================================================
+QUESTION 7 - GROUP BY
+=========================================================
+
+SCENARIO:
+The head office wants total transaction amounts
+for each branch.
+
+QUERY:
+
+SELECT branch_name,
+       SUM(amount) AS Total_Amount
+FROM bank_transactions
+GROUP BY branch_name;
+
+OUTPUT:
+
+Branch_Name    Total_Amount
+---------------------------
+Hyderabad      19500.00
+Vijayawada     24000.00
+Vizag          27000.00
+
+=========================================================
+QUESTION 8 - GROUP BY + HAVING
+=========================================================
+
+SCENARIO:
+Management wants branches whose total transaction
+amount exceeds $20,000.
+
+QUERY:
+
+SELECT branch_name,
+       SUM(amount) AS Total_Amount
+FROM bank_transactions
+GROUP BY branch_name
+HAVING SUM(amount) > 20000;
+
+OUTPUT:
+
+Branch_Name    Total_Amount
+---------------------------
+Vijayawada     24000.00
+Vizag          27000.00
+
+=========================================================
+QUESTION 9 - GROUP BY + ORDER BY
+=========================================================
+
+SCENARIO:
+The regional manager wants branches ranked from
+highest to lowest transaction volume.
+
+QUERY:
+
+SELECT branch_name,
+       SUM(amount) AS Total_Amount
+FROM bank_transactions
+GROUP BY branch_name
+ORDER BY Total_Amount DESC;
+
+OUTPUT:
+
+Branch_Name    Total_Amount
+---------------------------
+Vizag          27000.00
+Vijayawada     24000.00
+Hyderabad      19500.00
+
+=========================================================
+QUESTION 10 - GROUP BY + HAVING + ORDER BY
+=========================================================
+
+SCENARIO:
+Management wants branches that processed at least
+3 transactions and wants them ranked by transaction count.
+
+QUERY:
+
+SELECT branch_name,
+       COUNT(*) AS Total_Transactions
+FROM bank_transactions
+GROUP BY branch_name
+HAVING COUNT(*) >= 3
+ORDER BY Total_Transactions DESC;
+
+OUTPUT:
+
+Branch_Name    Total_Transactions
+---------------------------------
+Hyderabad      4
+Vijayawada     3
+Vizag          3
+
+=========================================================
+QUESTION 11 - WHERE + COUNT()
+=========================================================
+
+SCENARIO:
+Find the number of withdrawal transactions.
+
+QUERY:
+
+SELECT COUNT(*) AS Withdrawals
+FROM bank_transactions
+WHERE transaction_type='Withdrawal';
+
+OUTPUT:
+
+Withdrawals
+-----------
+4
+
+=========================================================
+QUESTION 12 - WHERE + AVG()
+=========================================================
+
+SCENARIO:
+The manager wants the average deposit amount.
+
+QUERY:
+
+SELECT AVG(amount) AS Avg_Deposit
+FROM bank_transactions
+WHERE transaction_type='Deposit';
+
+OUTPUT:
+
+Avg_Deposit
+-----------
+10000.00
+
+=========================================================
+QUESTION 13 - GROUP BY + MAX()
+=========================================================
+
+SCENARIO:
+Find the highest transaction amount in each branch.
+
+QUERY:
+
+SELECT branch_name,
+       MAX(amount) AS Highest_Amount
+FROM bank_transactions
+GROUP BY branch_name;
+
+OUTPUT:
+
+Branch_Name    Highest_Amount
+-----------------------------
+Hyderabad      9000
+Vijayawada     12000
+Vizag          15000
+
+=========================================================
+QUESTION 14 - GROUP BY + MIN()
+=========================================================
+
+SCENARIO:
+Find the smallest transaction amount in each branch.
+
+QUERY:
+
+SELECT branch_name,
+       MIN(amount) AS Lowest_Amount
+FROM bank_transactions
+GROUP BY branch_name;
+
+OUTPUT:
+
+Branch_Name    Lowest_Amount
+----------------------------
+Hyderabad      2000
+Vijayawada     1000
+Vizag          4000
+
+=========================================================
+QUESTION 15 - WHERE + ORDER BY
+=========================================================
+
+SCENARIO:
+The fraud detection team wants all transactions
+greater than $8,000.
+
+QUERY:
+
+SELECT *
+FROM bank_transactions
+WHERE amount > 8000
+ORDER BY amount DESC;
+
+OUTPUT:
+
+106 Ramesh   15000
+103 Kiran    12000
+110 Madhu    11000
+108 Rahul     9000
+
+=========================================================
+QUESTION 16 - GROUP BY + COUNT()
+=========================================================
+
+SCENARIO:
+Management wants to know how many customers
+transacted in each branch.
+
+QUERY:
+
+SELECT branch_name,
+       COUNT(*) AS Customer_Count
+FROM bank_transactions
+GROUP BY branch_name;
+
+OUTPUT:
+
+Hyderabad      4
+Vijayawada     3
+Vizag          3
+
+=========================================================
+QUESTION 17 - HAVING + COUNT()
+=========================================================
+
+SCENARIO:
+Find branches that processed more than
+3 transactions.
+
+QUERY:
+
+SELECT branch_name,
+       COUNT(*) AS Total_Transactions
+FROM bank_transactions
+GROUP BY branch_name
+HAVING COUNT(*) > 3;
+
+OUTPUT:
+
+Hyderabad    4
+
+=========================================================
+QUESTION 18 - GROUP BY + AVG()
+=========================================================
+
+SCENARIO:
+Management wants average transaction amount
+for each branch.
+
+QUERY:
+
+SELECT branch_name,
+       AVG(amount) AS Avg_Amount
+FROM bank_transactions
+GROUP BY branch_name;
+
+OUTPUT:
+
+Hyderabad      4875.00
+Vijayawada     8000.00
+Vizag          9000.00
+
+=========================================================
+QUESTION 19 - WHERE + GROUP BY + HAVING
+=========================================================
+
+SCENARIO:
+Find branches whose total deposit amount
+exceeds $15,000.
+
+QUERY:
+
+SELECT branch_name,
+       SUM(amount) AS Total_Deposit
+FROM bank_transactions
+WHERE transaction_type='Deposit'
+GROUP BY branch_name
+HAVING SUM(amount) > 15000;
+
+OUTPUT:
+
+Vijayawada     23000
+Vizag          23000
+
+=========================================================
+QUESTION 20 - GROUP BY + HAVING + ORDER BY
+=========================================================
+
+SCENARIO:
+Head office wants branches with average transaction
+amount greater than $7,000 sorted by average amount.
+
+QUERY:
+
+SELECT branch_name,
+       AVG(amount) AS Avg_Amount
+FROM bank_transactions
+GROUP BY branch_name
+HAVING AVG(amount) > 7000
+ORDER BY Avg_Amount DESC;
+
+OUTPUT:
+
+Vizag          9000.00
+Vijayawada     8000.00
+
+=========================================================
+TOPICS COVERED
+=========================================================
+
+1. WHERE
+2. GROUP BY
+3. HAVING
+4. ORDER BY
+5. SUM()
+6. AVG()
+7. MIN()
+8. MAX()
+9. COUNT()
+10. WHERE + AGGREGATE
+11. GROUP BY + AGGREGATE
+12. GROUP BY + HAVING
+13. GROUP BY + ORDER BY
+14. GROUP BY + HAVING + ORDER BY
+
+=========================================================
+END OF BANK AGGREGATE FUNCTION NOTES
+=========================================================
